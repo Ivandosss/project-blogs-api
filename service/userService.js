@@ -1,6 +1,6 @@
 const Joi = require('joi');
 const errors = require('../functions/index');
-const { User } = require('../models');
+const { Users } = require('../models');
 
 const userCheck = Joi.object({
   displayName: Joi.string().min(8).required(),
@@ -15,13 +15,13 @@ const userCreateService = async (body) => {
   const { error } = userCheck.validate(body);
   const message = error && error.message.replace(' at least 6', ' 6');
   if (error) return errors(400, message);
-  const getUser = await User.findAll({
+  const getUser = await Users.findOne({
     where: {
       email: body.email,
     },
   });
-  if (getUser.length !== 0) return errors(409, 'User already registered');
-  const user = await User.create(body);
+  if (getUser) return errors(409, 'User already registered');
+  const user = await Users.create(body);
   return user;
 };
 

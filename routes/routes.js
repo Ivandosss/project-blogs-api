@@ -6,4 +6,8 @@ routes.post(
   userCreate,
 );
 
+routes.post(
+  '/login',
+);
+
 module.exports = routes;
