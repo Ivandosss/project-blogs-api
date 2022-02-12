@@ -18,13 +18,20 @@ const expires = {
 
 const loginService = async (body) => {
   const { error } = loginCheck.validate(body);
+
   if (error) return errors(400, error.message);
 
-  const email = await Users.findOne({ where: { email: body.email } });
+  const email = await Users.findOne({
+    where: {
+      email: body.email,
+    },
+  });
+
   if (!email) return errors(400, 'Invalid fields');
-  
+
   const { password: passBD, ...userWithoutPassword } = email;
   const token = jwt.sign({ data: userWithoutPassword }, secret, expires);
+
   return { token };
 };
 
