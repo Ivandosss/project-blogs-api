@@ -16,6 +16,13 @@ const categoriesServices = async (requestBody) => {
   return _previousDataValues;
 };
 
+const getAllCategoryService = async () => {
+  const allCategories = await Categories.findAll();
+
+  return allCategories;
+};
+
 module.exports = {
   categoriesServices,
+  getAllCategoryService,
 };

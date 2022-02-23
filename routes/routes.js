@@ -1,5 +1,8 @@
 const routes = require('express').Router();
-const { createCategoriesController } = require('../controller/categoryController');
+const { 
+  createCategoriesController, 
+  getAllCategoryController, 
+} = require('../controller/categoryController');
 const { loginController } = require('../controller/loginController');
 const { userCreate, userController, userControllerById } = require('../controller/users');
 const token = require('../middleware/token');
@@ -30,6 +33,12 @@ routes.post(
   '/categories',
   token,
   createCategoriesController,
+);
+
+routes.get(
+  '/categories',
+  token,
+  getAllCategoryController,
 );
 
 module.exports = routes;
