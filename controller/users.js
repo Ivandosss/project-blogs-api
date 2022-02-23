@@ -1,4 +1,4 @@
-const { userCreateService, userService } = require('../service/userService');
+const { userCreateService, userService, userServiceById } = require('../service/userService');
 
 const userCreate = async (req, res, next) => {
   let user;
@@ -30,7 +30,26 @@ const userController = async (req, res, next) => {
   return res.status(200).json(users);
 };
 
+const userControllerById = async (req, res, next) => {
+  const { id } = req.params;
+  let users;
+
+  try {
+    users = await userServiceById(id);
+  } catch (err) {
+    console.error(err.message);
+    err.status = 500;
+    err.message = { message: 'Internal server error' };
+    next(err);
+  }
+
+  return users
+  ? res.status(200).json(users)
+  : res.status(404).json({ message: 'User does not exist' });
+};
+
 module.exports = {
   userCreate,
   userController,
+  userControllerById,
 };

@@ -31,7 +31,14 @@ const userService = async () => {
   return users;
 };
 
+const userServiceById = async (id) => {
+  const users = await Users.findByPk(id);
+  
+  return users;
+};
+
 module.exports = {
   userCreateService,
   userService,
+  userServiceById,
 };
