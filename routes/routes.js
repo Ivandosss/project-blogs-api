@@ -4,10 +4,12 @@ const {
   getAllCategoryController, 
 } = require('../controller/categoryController');
 const { loginController } = require('../controller/loginController');
-const { postController, postsSearchController } = require('../controller/postController');
+const { postController, 
+  postsSearchController, 
+  PostSearchByIdController, 
+} = require('../controller/postController');
 const { userCreate, userController, userControllerById } = require('../controller/users');
 const token = require('../middleware/token');
-const { postSearchByIdService } = require('../service/postService');
 
 routes.post(
   '/user',
@@ -49,16 +51,16 @@ routes.post(
   postController,
 );
 
-routes.post(
+routes.get(
   '/post',
   token,
   postsSearchController,
 );
 
-routes.post(
+routes.get(
   '/post/:id',
   token,
-  postSearchByIdService,
+  PostSearchByIdController,
 );
 
 module.exports = routes;
