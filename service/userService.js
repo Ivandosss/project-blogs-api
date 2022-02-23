@@ -37,8 +37,18 @@ const userServiceById = async (id) => {
   return users;
 };
 
+const getUserByEmailService = async (email) => {
+  const getUser = await Users
+    .findOne({ where: { email }, attributes: { exclude: ['password'] }, raw: true });
+
+  if (!getUser) console.error('src error');
+
+  return getUser;
+};
+
 module.exports = {
   userCreateService,
   userService,
   userServiceById,
+  getUserByEmailService,
 };
