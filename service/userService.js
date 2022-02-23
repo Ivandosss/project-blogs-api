@@ -25,6 +25,13 @@ const userCreateService = async (body) => {
   return user;
 };
 
+const userService = async () => {
+  const users = await Users.findAll();
+  console.log('services', users);
+  return users;
+};
+
 module.exports = {
   userCreateService,
+  userService,
 };

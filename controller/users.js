@@ -1,4 +1,4 @@
-const { userCreateService } = require('../service/userService');
+const { userCreateService, userService } = require('../service/userService');
 
 const userCreate = async (req, res, next) => {
   let user;
@@ -17,6 +17,20 @@ const userCreate = async (req, res, next) => {
   : [];
 };
 
+const userController = async (req, res, next) => {
+  let users;
+  try {
+    users = await userService();
+  } catch (err) {
+    console.error(err.message);
+    err.status = 500;
+    err.message = { message: 'internat Server Error' };
+    next(err);
+  }
+  return res.status(200).json(users);
+};
+
 module.exports = {
   userCreate,
+  userController,
 };
