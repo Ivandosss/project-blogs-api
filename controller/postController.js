@@ -1,7 +1,8 @@
 const { 
   createPostService, 
   postsSearchService, 
-  postSearchByIdService, 
+  postSearchByIdService,
+  updatePostService, 
 } = require('../service/postService');
 const { getUserByEmailService } = require('../service/userService');
 
@@ -56,8 +57,25 @@ const PostSearchByIdController = async (req, res, next) => {
   : res.status(200).json(post);
 };
 
+const updatePostController = async (req, res, next) => {
+  let post;
+  try {
+    post = await updatePostService(req.params.id, req.body, req.user.id);
+  } catch (error) {
+    console.error(error.message);
+    error.status = 500;
+    error.message = 'Internal Server Error';
+    return next(error);
+  }
+
+  return post.status
+  ? res.status(post.status).json({ message: post.message })
+  : res.status(200).json(post);
+};
+
 module.exports = {
   postController,
   postsSearchController,
   PostSearchByIdController,
+  updatePostController,
 };

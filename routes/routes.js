@@ -6,7 +6,8 @@ const {
 const { loginController } = require('../controller/loginController');
 const { postController, 
   postsSearchController, 
-  PostSearchByIdController, 
+  PostSearchByIdController,
+  updatePostController, 
 } = require('../controller/postController');
 const { userCreate, userController, userControllerById } = require('../controller/users');
 const token = require('../middleware/token');
@@ -61,6 +62,12 @@ routes.get(
   '/post/:id',
   token,
   PostSearchByIdController,
+);
+
+routes.put(
+  '/post/:id',
+  token,
+  updatePostController,
 );
 
 module.exports = routes;
