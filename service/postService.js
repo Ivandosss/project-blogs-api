@@ -1,5 +1,6 @@
 const Joi = require('joi');
 const errorConstructor = require('../functions');
+const errorC = require('../functions/error.c');
 const { Categories, BlogPosts, Users } = require('../models');
 
 const checkPostSchema = Joi.object({
@@ -46,29 +47,28 @@ const postSearchByIdService = async (id) => {
   return post;
 };
 
-const updatePostService = async (id, post, userId) => {
-  if (post.categoryIds) return errorConstructor(400, 'Categories cannot be edited');
-
-  const { error } = checkPostSchema.validate({ categoryIds: [], ...post });
-  if (error) return errorConstructor(400, error.mensage);
-
-  const user = await BlogPosts.findOne({ where: { id },
-    include: [{ model: Users, as: 'user', attribues: { exclude: ['password'] } }],
-  });
-  // console.log('SERVICE:', user);
-  if (user.userId !== userId) return errorConstructor(401, 'Unauthorized user');
-  const [updatePost] = await BlogPosts.update({ title: post.title, content: post.content },
-  { where: { id } });
+const updatePostService = async (id, post, user) => {
+  if (post.categoryIds) return errorC(400, 'Categories cannot be edited');
+    const { error } = checkPostSchema.validate({ categoryIds: [], ...post });
+    if (error) return errorC(400, error.message);
+    const getUser = await BlogPosts.findOne({ where: { id }, 
+      include: [{ model: Users, as: 'user', attributes: { exclude: ['password'] } }] });
+    const { dataValues } = getUser;
+    // const { dataValues: userId } = users;
+    if (dataValues.userId !== user.dataValues.id) return errorC(401, 'Unauthorized user');
+    const [updatePost] = await BlogPosts.update({ title: post.title,
+    content: post.content },
+    { where: { id } });
   
-  if (!updatePost) return errorConstructor(404, 'Post Not Found');
-  const findPost = await BlogPosts.findOne({ where: { id },
-    include: [
-      { model: Users, as: 'user', attributes: { exclude: ['password'] } },
-      { model: Categories, as: 'categories', through: { attributes: [] } },
-    ],
-  });
-  return { ...findPost };
-};
+    if (!updatePost) return errorC(404, 'Post Not Found');
+    const findPost = await BlogPosts.findOne({
+      where: { id },
+      include: [{ model: Users, as: 'user', attributes: { exclude: ['password'] } },
+        { model: Categories, as: 'categories', through: { attributes: [] } }],
+    });
+    const { title, content, userId, categories } = findPost;
+    return { title, content, userId, categories };
+  };
 
 module.exports = {
   createPostService,

@@ -4,6 +4,7 @@ const {
   postSearchByIdService,
   updatePostService, 
 } = require('../service/postService');
+
 const { getUserByEmailService } = require('../service/userService');
 
 const postController = async (req, res, next) => {
@@ -58,9 +59,9 @@ const PostSearchByIdController = async (req, res, next) => {
 };
 
 const updatePostController = async (req, res, next) => {
-  let post;
+  let update;
   try {
-    post = await updatePostService(req.params.id, req.body, req.user.id);
+    update = await updatePostService(req.params.id, req.body, req.user);
   } catch (error) {
     console.error(error.message);
     error.status = 500;
@@ -68,10 +69,10 @@ const updatePostController = async (req, res, next) => {
     return next(error);
   }
 
-  return post.status
-  ? res.status(post.status).json({ message: post.message })
-  : res.status(200).json(post);
-};
+  return update.status
+  ? res.status(update.status).json({ message: update.message })
+  : res.status(200).json(update);
+ };
 
 module.exports = {
   postController,
