@@ -2,7 +2,8 @@ const {
   createPostService, 
   postsSearchService, 
   postSearchByIdService,
-  updatePostService, 
+  updatePostService,
+  deletePostService, 
 } = require('../service/postService');
 
 const { getUserByEmailService } = require('../service/userService');
@@ -74,9 +75,23 @@ const updatePostController = async (req, res, next) => {
   : res.status(200).json(update);
  };
 
+ const deletePostController = async (req, res, next) => {
+  const { params, user } = req;
+  let postDelete;
+  try {
+    postDelete = await deletePostService(params.id, user);
+  } catch (error) {
+    return next(error);
+  }
+  return postDelete.status
+  ? res.status(postDelete.status).json({ message: postDelete.message })
+  : res.status(204).json();
+};
+
 module.exports = {
   postController,
   postsSearchController,
   PostSearchByIdController,
   updatePostController,
+  deletePostController,
 };

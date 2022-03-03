@@ -1,6 +1,6 @@
 const Joi = require('joi');
 const errorConstructor = require('../functions');
-const errorC = require('../functions/error.c');
+const errorConst = require('../functions/error.c');
 const { Categories, BlogPosts, Users } = require('../models');
 
 const checkPostSchema = Joi.object({
@@ -48,19 +48,19 @@ const postSearchByIdService = async (id) => {
 };
 
 const updatePostService = async (id, post, user) => {
-  if (post.categoryIds) return errorC(400, 'Categories cannot be edited');
+  if (post.categoryIds) return errorConst(400, 'Categories cannot be edited');
     const { error } = checkPostSchema.validate({ categoryIds: [], ...post });
-    if (error) return errorC(400, error.message);
+    if (error) return errorConst(400, error.message);
     const getUser = await BlogPosts.findOne({ where: { id }, 
       include: [{ model: Users, as: 'user', attributes: { exclude: ['password'] } }] });
     const { dataValues } = getUser;
     // const { dataValues: userId } = users;
-    if (dataValues.userId !== user.dataValues.id) return errorC(401, 'Unauthorized user');
+    if (dataValues.userId !== user.dataValues.id) return errorConst(401, 'Unauthorized user');
     const [updatePost] = await BlogPosts.update({ title: post.title,
     content: post.content },
     { where: { id } });
   
-    if (!updatePost) return errorC(404, 'Post Not Found');
+    if (!updatePost) return errorConst(404, 'Post Not Found');
     const findPost = await BlogPosts.findOne({
       where: { id },
       include: [{ model: Users, as: 'user', attributes: { exclude: ['password'] } },
@@ -70,9 +70,23 @@ const updatePostService = async (id, post, user) => {
     return { title, content, userId, categories };
   };
 
+  const deletePostService = async (id, user) => {
+    const post = await BlogPosts.findOne({ 
+      where: { id },
+      include: [{ model: Users, as: 'user', attributes: { exclude: ['password'] } }],
+    });
+  
+    if (!post) return errorConst(404, 'Post does not exist');
+    const { dataValues: { userId } } = post;
+    if (userId !== user.dataValues.id) return errorConst(401, 'Unauthorized user'); 
+    const deletedPost = await BlogPosts.destroy({ where: { id } });
+    return deletedPost;
+  };
+
 module.exports = {
   createPostService,
   postsSearchService,
   postSearchByIdService,
   updatePostService,
+  deletePostService,
 };

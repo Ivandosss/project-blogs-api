@@ -7,7 +7,8 @@ const { loginController } = require('../controller/loginController');
 const { postController, 
   postsSearchController, 
   PostSearchByIdController,
-  updatePostController, 
+  updatePostController,
+  deletePostController, 
 } = require('../controller/postController');
 const { userCreate, userController, userControllerById } = require('../controller/users');
 const token = require('../middleware/token');
@@ -68,6 +69,12 @@ routes.put(
   '/post/:id',
   token,
   updatePostController,
+);
+
+routes.delete(
+  '/post/:id',
+  token,
+  deletePostController,
 );
 
 module.exports = routes;
