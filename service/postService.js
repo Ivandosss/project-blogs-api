@@ -83,10 +83,18 @@ const updatePostService = async (id, post, user) => {
     return deletedPost;
   };
 
+  const userDeleteService = async ({ dataValues: { id } }) => {
+    const userD = await Users.findByPk(id);
+    if (!userD) return errorConst(404, 'User does not exist');
+    const deleteUser = await Users.destroy({ where: { id } });
+    return deleteUser;
+  };
+
 module.exports = {
   createPostService,
   postsSearchService,
   postSearchByIdService,
   updatePostService,
   deletePostService,
+  userDeleteService,
 };

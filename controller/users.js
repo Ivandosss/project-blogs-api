@@ -1,3 +1,4 @@
+const { userDeleteService } = require('../service/postService');
 const { userCreateService, userService, userServiceById } = require('../service/userService');
 
 const userCreate = async (req, res, next) => {
@@ -48,8 +49,21 @@ const userControllerById = async (req, res, next) => {
   : res.status(404).json({ message: 'User does not exist' });
 };
 
+const userDeleteController = async (req, res, next) => {
+  let userDelete;
+  try {
+    userDelete = await userDeleteService(req.user);
+  } catch (error) {
+    next(error);
+  }
+  return userDelete.status
+  ? res.status(userDelete.status).json({ message: userDelete.message })
+  : res.status(204).json();
+};
+
 module.exports = {
   userCreate,
   userController,
   userControllerById,
+  userDeleteController,
 };

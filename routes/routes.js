@@ -10,7 +10,12 @@ const { postController,
   updatePostController,
   deletePostController, 
 } = require('../controller/postController');
-const { userCreate, userController, userControllerById } = require('../controller/users');
+const { 
+  userCreate, 
+  userController, 
+  userControllerById, 
+  userDeleteController, 
+} = require('../controller/users');
 const token = require('../middleware/token');
 
 routes.post(
@@ -77,4 +82,9 @@ routes.delete(
   deletePostController,
 );
 
+routes.delete(
+  '/user/:me',
+  token,
+  userDeleteController,
+);
 module.exports = routes;
